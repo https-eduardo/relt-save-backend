@@ -3,31 +3,25 @@ import {
   BadRequestException,
   NotFoundException,
 } from '@nestjs/common';
-import { InjectModel } from '@nestjs/mongoose';
-import { Model } from 'mongoose';
-import { User } from 'src/schemas/user.schema';
 import { CreateUserData } from './types/create-user-data.type';
 import { UpdateUserData } from './types/update-user.type';
+import { PrismaService } from '../prisma/prisma.service';
 
 @Injectable()
 export class UsersService {
-  constructor(
-    @InjectModel(User.name) private readonly userModel: Model<User>,
-  ) {}
+  constructor(private prisma: PrismaService) { }
 
   async create(createUserData: CreateUserData) {
-    const user = new this.userModel(createUserData);
     try {
-      await user.save();
+      return await this.prisma.user.create({ data: createUserData });
     } catch {
       throw new BadRequestException();
     }
-    return user;
   }
 
-  async findById(id: string) {
+  async findById(id: number) {
     try {
-      const user = await this.userModel.findById(id);
+      const user = await this.prisma.user.findUnique({ where: { id } });
       if (!user) throw new NotFoundException();
     } catch {
       throw new BadRequestException();
@@ -36,19 +30,19 @@ export class UsersService {
 
   async findByEmail(email: string) {
     try {
-      const user = await this.userModel.findOne({ email });
+      const user = await this.prisma.user.findUnique({ where: { email } });
       if (!user) throw new NotFoundException();
     } catch {
       throw new BadRequestException();
     }
   }
 
-  async updateById(id: string, updateUserData: UpdateUserData) {
+  async updateById(id: number, updateUserData: UpdateUserData) {
     try {
-      return await this.userModel.updateOne(
-        { _id: id },
-        { $set: updateUserData },
-      );
+      return await this.prisma.user.update({
+        where: { id },
+        data: updateUserData,
+      });
     } catch {
       throw new BadRequestException();
     }

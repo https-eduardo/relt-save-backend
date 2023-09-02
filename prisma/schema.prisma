@@ -1,0 +1,105 @@
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+model User {
+  id           Int           @id @default(autoincrement())
+  name         String
+  email        String        @unique
+  password     String
+  profile_url  String
+  transactions Transaction[]
+  bank_account BankAccount?
+  budgets      Budget[]
+  created_at   DateTime      @default(now())
+}
+
+model BankAccount {
+  id         Int      @id @default(autoincrement())
+  user_id    Int      @unique
+  user       User     @relation(fields: [user_id], references: [id], onDelete: Cascade)
+  cards      Card[]
+  name       String   @db.VarChar(32)
+  balance    Float    @default(0)
+  bank_id    Int      @unique
+  bank       Bank     @relation(fields: [bank_id], references: [id])
+  created_at DateTime @default(now())
+}
+
+model Bank {
+  id           Int          @id @default(autoincrement())
+  logoUrl      String
+  name         String
+  bank_account BankAccount?
+}
+
+model Budget {
+  id          Int      @id @default(autoincrement())
+  user_id     Int?
+  user        User?    @relation(fields: [user_id], references: [id], onDelete: Cascade)
+  name        String   @db.VarChar(32)
+  description String
+  due_date    DateTime
+  value       Float    @default(0)
+  created_at  DateTime @default(now())
+}
+
+model Card {
+  id              Int           @id @default(autoincrement())
+  bank_account_id Int?
+  transactions    Transaction[]
+  type            CardType
+  bank_account    BankAccount?  @relation(fields: [bank_account_id], references: [id], onDelete: Cascade)
+  name            String        @db.VarChar(24)
+  final_numbers   Int           @db.SmallInt
+  created_at      DateTime      @default(now())
+}
+
+model Category {
+  id           Int           @id @default(autoincrement())
+  name         String        @unique @db.VarChar(32)
+  transactions Transaction[]
+}
+
+model Transaction {
+  id           Int         @id @default(autoincrement())
+  user_id      Int?
+  user         User?       @relation(fields: [user_id], references: [id], onDelete: Cascade)
+  name         String      @db.VarChar(32)
+  description  String
+  categories   Category[]
+  charges      Charge[]
+  payment_type PaymentType
+  card_id      Int?
+  card         Card?       @relation(fields: [card_id], references: [id])
+  due_date     DateTime
+  installments Int         @db.SmallInt
+  value        Float
+  paid_at      DateTime
+  created_at   DateTime    @default(now())
+}
+
+model Charge {
+  id             Int          @id @default(autoincrement())
+  transaction_id Int?
+  transaction    Transaction? @relation(fields: [transaction_id], references: [id], onDelete: Cascade)
+  due_date       DateTime
+  paid_at        DateTime
+  created_at     DateTime     @default(now())
+}
+
+enum PaymentType {
+  BALANCE
+  PHYSICAL_MONEY
+  CARD
+}
+
+enum CardType {
+  DEBIT
+  CREDIT
+}
