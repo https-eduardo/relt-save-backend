@@ -8,15 +8,17 @@ generator client {
 }
 
 model User {
-  id           Int           @id @default(autoincrement())
-  name         String
-  email        String        @unique
-  password     String
-  profile_url  String
-  transactions Transaction[]
-  bank_account BankAccount?
-  budgets      Budget[]
-  created_at   DateTime      @default(now())
+  id            Int           @id @default(autoincrement())
+  name          String
+  email         String        @unique
+  password      String?
+  provider      AuthProvider?
+  profile_url   String
+  refresh_token String?
+  transactions  Transaction[]
+  bank_accounts BankAccount[]
+  budgets       Budget[]
+  created_at    DateTime      @default(now())
 }
 
 model BankAccount {
@@ -102,4 +104,8 @@ enum PaymentType {
 enum CardType {
   DEBIT
   CREDIT
+}
+
+enum AuthProvider {
+  GOOGLE
 }

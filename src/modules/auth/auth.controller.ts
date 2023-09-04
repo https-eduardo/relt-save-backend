@@ -1,45 +1,63 @@
 import {
+  Body,
   Controller,
   Get,
+  HttpCode,
   Post,
   Req,
   Res,
   UseGuards,
-  Body,
-  Headers,
-  BadRequestException,
 } from '@nestjs/common';
 import { AuthService } from './auth.service';
 import { GoogleOAuthGuard } from './guards/google-oauth.guard';
 import { Request, Response } from 'express';
+import { UsersService } from '../users/users.service';
+import { AuthLoginDto } from './dto/auth-login.dto';
+import { JwtAuthGuard } from './guards/jwt-auth.guard';
+import {
+  GoogleUserPayload,
+  JwtUserPayload,
+} from 'src/common/types/user-payload.type';
+import { User } from 'src/common/decorators/user.decorator';
 
 @Controller('auth')
 export class AuthController {
-  constructor(private readonly service: AuthService) {}
+  constructor(
+    private readonly service: AuthService,
+    private readonly usersService: UsersService,
+  ) {}
 
   @Get('google')
   @UseGuards(GoogleOAuthGuard)
-  async googleAuth(@Req() req) {}
+  googleAuth() {}
 
   @Get('google/callback')
   @UseGuards(GoogleOAuthGuard)
-  googleAuthRedirect(@Req() req: Request, @Res() res: Response) {
-    const user = req.user as any;
-    const appLink = this.service.getGoogleAppLink(user);
-
-    return res.redirect(appLink);
+  async googleCallback(@User() user: GoogleUserPayload, @Res() res: Response) {
+    // TODO: use the data to redirect to the app with tokens
+    return await this.service.loginWithGoogle(user);
   }
 
-  @Get('google/me')
-  async getGoogleProfile(@Headers() headers: Record<string, any>) {
-    const authorization = headers.authorization as string;
-    if (!authorization) throw new BadRequestException();
-    const accessToken = authorization.split(' ')[1];
-    return await this.service.getGoogleProfileByAccessToken(accessToken);
+  @Post()
+  @HttpCode(200)
+  async login(@Body() authLoginDto: AuthLoginDto) {
+    return await this.service.login(authLoginDto);
   }
 
-  @Post('google/refresh')
-  async refreshAccessToken(@Body() { refreshToken }: { refreshToken: string }) {
-    return await this.service.refreshAccessToken(refreshToken);
+  @Post('logout')
+  @UseGuards(JwtAuthGuard)
+  @HttpCode(200)
+  async logout(
+    @User() user: JwtUserPayload,
+    @Res({ passthrough: true }) response: Response,
+  ) {
+    await this.service.logout(user.id);
+  }
+
+  @Post('refresh')
+  @HttpCode(200)
+  async updateAccessToken(@Req() req: Request) {
+    const refreshToken = this.service.extractBearerToken(req);
+    return await this.service.updateAccess(refreshToken);
   }
 }
