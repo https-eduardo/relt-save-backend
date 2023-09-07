@@ -34,14 +34,14 @@ export class AuthController {
     @User() user: GoogleUserPayload,
     @Res() res: Response,
   ) {
-    const { refreshToken, accessToken } = await this.service.loginWithGoogle(
-      user,
-    );
+    const { refreshToken, accessToken, alreadyRegistered } =
+      await this.service.loginWithGoogle(user);
     const { state: appRedirect } = req.query;
     const redirectUri = this.service.makeRedirectUri({
       appRedirectUri: appRedirect as string,
       accessToken,
       refreshToken,
+      alreadyRegistered,
     });
     return res.redirect(redirectUri);
   }

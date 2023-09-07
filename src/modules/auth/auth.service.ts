@@ -48,6 +48,7 @@ export class AuthService {
   async loginWithGoogle(user: GoogleUserPayload) {
     try {
       let existentUser = await this.usersService.findByEmail(user.email);
+      const alreadyRegistered = !!existentUser;
 
       if (existentUser && !existentUser.provider)
         await this.usersService.updateProvider(existentUser.id, 'GOOGLE');
@@ -63,7 +64,7 @@ export class AuthService {
       await this.usersService.updateRefreshToken(existentUser.id, refreshToken);
       const accessToken = this.generateAccessToken(existentUser);
 
-      return { refreshToken, accessToken };
+      return { refreshToken, accessToken, alreadyRegistered };
     } catch {
       throw new BadRequestException();
     }
@@ -91,8 +92,9 @@ export class AuthService {
   }
 
   makeRedirectUri(appRedirectOptions: AppRedirectOptions) {
-    const { appRedirectUri, accessToken, refreshToken } = appRedirectOptions;
-    const redirectUri = `${appRedirectUri}?access_token=${accessToken}&refresh_token=${refreshToken}`;
+    const { appRedirectUri, accessToken, refreshToken, alreadyRegistered } =
+      appRedirectOptions;
+    const redirectUri = `${appRedirectUri}?access_token=${accessToken}&refresh_token=${refreshToken}&alreadyRegistered=${alreadyRegistered}`;
     return redirectUri;
   }
 
