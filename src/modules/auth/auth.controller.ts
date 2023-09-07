@@ -11,7 +11,6 @@ import {
 import { AuthService } from './auth.service';
 import { GoogleOAuthGuard } from './guards/google-oauth.guard';
 import { Request, Response } from 'express';
-import { UsersService } from '../users/users.service';
 import { AuthLoginDto } from './dto/auth-login.dto';
 import { JwtAuthGuard } from './guards/jwt-auth.guard';
 import {
@@ -22,10 +21,7 @@ import { User } from 'src/common/decorators/user.decorator';
 
 @Controller('auth')
 export class AuthController {
-  constructor(
-    private readonly service: AuthService,
-    private readonly usersService: UsersService,
-  ) {}
+  constructor(private readonly service: AuthService) {}
 
   @Get('google')
   @UseGuards(GoogleOAuthGuard)
