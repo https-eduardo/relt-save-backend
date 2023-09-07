@@ -23,9 +23,12 @@ export class UsersService {
       const data = { ...createUserDto };
 
       if (data.password) data.password = await this.hash(data.password);
-      return await this.prisma.user.create({
+      const user = await this.prisma.user.create({
         data,
       });
+
+      delete user.password;
+      return user;
     } catch {
       throw new BadRequestException();
     }
@@ -36,8 +39,7 @@ export class UsersService {
       return await this.prisma.user.create({
         data: { ...createGoogleUserDto, provider: 'GOOGLE' },
       });
-    } catch (ex) {
-      console.log(ex);
+    } catch {
       throw new BadRequestException();
     }
   }
@@ -53,7 +55,7 @@ export class UsersService {
   async findByEmail(email: string) {
     try {
       return await this.prisma.user.findUnique({ where: { email } });
-    } catch (ex) {
+    } catch {
       throw new BadRequestException();
     }
   }

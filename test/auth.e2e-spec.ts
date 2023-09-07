@@ -26,7 +26,7 @@ describe('Users Tests (E2E)', () => {
       name: 'Eduardo Wagner',
       password: 'minhasenha',
       email: 'meuemailfake@gmail.com',
-      profile_url: 'https://localhost.com',
+      profile_url: 'https://somesite.com/someimg',
     };
 
     app.useGlobalPipes(
@@ -39,11 +39,12 @@ describe('Users Tests (E2E)', () => {
   });
 
   it('Create a new user', async () => {
-    return request(app.getHttpServer())
+    const data = request(app.getHttpServer())
       .post('/users')
       .send(fakeUser)
       .expect(201)
       .expect((res) => res.body.email === fakeUser.email);
+    console.log((await data).body);
   });
 
   it('Authenticate using created user credentials', async () => {
