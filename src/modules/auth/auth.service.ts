@@ -94,7 +94,7 @@ export class AuthService {
   makeRedirectUri(appRedirectOptions: AppRedirectOptions) {
     const { appRedirectUri, accessToken, refreshToken, alreadyRegistered } =
       appRedirectOptions;
-    const redirectUri = `${appRedirectUri}?access_token=${accessToken}&refresh_token=${refreshToken}&alreadyRegistered=${alreadyRegistered}`;
+    const redirectUri = `${appRedirectUri}?access_token=${accessToken}&refresh_token=${refreshToken}&already_registered=${alreadyRegistered}`;
     return redirectUri;
   }
 
