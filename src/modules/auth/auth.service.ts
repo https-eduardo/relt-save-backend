@@ -9,8 +9,9 @@ import { UsersService } from '../users/users.service';
 import { JwtService } from '@nestjs/jwt';
 import { User } from '@prisma/client';
 import { AuthLoginDto } from './dto/auth-login.dto';
-import { JwtRefreshTokenPayload } from 'src/common/types/refresh-token-payload.type';
+import { JwtRefreshTokenPayload } from 'src/modules/auth/types/refresh-token-payload.type';
 import { GoogleUserPayload } from 'src/common/types/user-payload.type';
+import { AppRedirectOptions } from './types/redirect-options.type';
 
 @Injectable()
 export class AuthService {
@@ -87,6 +88,12 @@ export class AuthService {
     if (!user) throw new NotFoundException();
 
     return user;
+  }
+
+  makeRedirectUri(appRedirectOptions: AppRedirectOptions) {
+    const { appRedirectUri, accessToken, refreshToken } = appRedirectOptions;
+    const redirectUri = `${appRedirectUri}?access_token=${accessToken}&refresh_token=${refreshToken}`;
+    return redirectUri;
   }
 
   private async validateUser(authLoginDto: AuthLoginDto) {

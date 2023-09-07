@@ -33,9 +33,21 @@ export class AuthController {
 
   @Get('google/callback')
   @UseGuards(GoogleOAuthGuard)
-  async googleCallback(@User() user: GoogleUserPayload, @Res() res: Response) {
-    // TODO: use the data to redirect to the app with tokens
-    return await this.service.loginWithGoogle(user);
+  async googleCallback(
+    @Req() req: Request,
+    @User() user: GoogleUserPayload,
+    @Res() res: Response,
+  ) {
+    const { refreshToken, accessToken } = await this.service.loginWithGoogle(
+      user,
+    );
+    const { state: appRedirect } = req.query;
+    const redirectUri = this.service.makeRedirectUri({
+      appRedirectUri: appRedirect as string,
+      accessToken,
+      refreshToken,
+    });
+    return res.redirect(redirectUri);
   }
 
   @Post()
