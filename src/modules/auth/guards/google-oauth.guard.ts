@@ -1,5 +1,5 @@
-import { Injectable } from '@nestjs/common';
-import { AuthGuard } from '@nestjs/passport';
+import { ExecutionContext, Injectable } from '@nestjs/common';
+import { AuthGuard, IAuthModuleOptions } from '@nestjs/passport';
 
 @Injectable()
 export class GoogleOAuthGuard extends AuthGuard('google') {
@@ -8,5 +8,9 @@ export class GoogleOAuthGuard extends AuthGuard('google') {
       accessType: 'offline',
       prompt: 'consent',
     });
+  }
+  getAuthenticateOptions(context: ExecutionContext): IAuthModuleOptions<any> {
+    const req = context.switchToHttp().getRequest();
+    return { state: req.query.redirect_uri };
   }
 }

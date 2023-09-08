@@ -2,6 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { PassportStrategy } from '@nestjs/passport';
 import { Strategy, VerifyCallback } from 'passport-google-oauth20';
 import { AuthService } from '../auth.service';
+import { GoogleUserPayload } from 'src/common/types/user-payload.type';
 
 @Injectable()
 export class GoogleOAuthStrategy extends PassportStrategy(Strategy, 'google') {
@@ -9,8 +10,7 @@ export class GoogleOAuthStrategy extends PassportStrategy(Strategy, 'google') {
     super({
       clientID: process.env.GOOGLE_CLIENT_ID,
       clientSecret: process.env.GOOGLE_CLIENT_SECRET,
-      callbackURL:
-        'https://f9f5-45-176-69-251.ngrok-free.app/auth/google/callback',
+      callbackURL: process.env.GOOGLE_CALLBACK_URI,
       scope: ['email', 'profile'],
     });
   }
@@ -20,12 +20,11 @@ export class GoogleOAuthStrategy extends PassportStrategy(Strategy, 'google') {
     profile: any,
     done: VerifyCallback,
   ) {
-    const { name, emails, photos } = profile;
-    const user = {
+    const { displayName, emails, photos } = profile;
+    const user: GoogleUserPayload = {
       email: emails[0].value,
-      firstName: name.givenName,
-      lastName: name.familyName,
-      picture: photos[0].value,
+      name: displayName,
+      profile_url: photos[0].value,
       accessToken,
       refreshToken,
     };
