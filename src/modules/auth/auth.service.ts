@@ -26,6 +26,7 @@ export class AuthService {
       name: user.name,
       email: user.email,
       profile_url: user.profile_url,
+      created_at: user.created_at,
     };
 
     return this.jwtService.sign(payload, { expiresIn: '10m' });
