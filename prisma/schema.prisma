@@ -13,7 +13,7 @@ model User {
   email         String        @unique
   password      String?
   provider      AuthProvider?
-  profile_url   String
+  profile_url   String?
   refresh_token String?
   transactions  Transaction[]
   bank_accounts BankAccount[]

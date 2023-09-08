@@ -2,11 +2,11 @@ import { OmitType } from '@nestjs/mapped-types';
 import {
   IsEmail,
   IsNotEmpty,
+  IsOptional,
   IsString,
   IsUrl,
   MinLength,
 } from 'class-validator';
-import { UserProvider } from 'src/common/types/user-provider.type';
 
 export class CreateUserDto {
   @IsString()
@@ -21,7 +21,8 @@ export class CreateUserDto {
   password: string;
 
   @IsUrl()
-  profile_url: string;
+  @IsOptional()
+  profile_url?: string;
 }
 
 export class CreateGoogleUserDto extends OmitType(CreateUserDto, [
