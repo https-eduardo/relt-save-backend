@@ -2,7 +2,8 @@ export interface JwtUserPayload {
   id: number;
   name: string;
   email: string;
-  profileUrl: string;
+  profile_url: string;
+  created_at: Date;
 }
 
 export interface GoogleUserPayload {
