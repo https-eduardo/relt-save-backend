@@ -35,8 +35,8 @@ model BankAccount {
 
 model Bank {
   id           Int          @id @default(autoincrement())
-  logoUrl      String
-  name         String
+  logo_url     String
+  name         String       @unique
   bank_account BankAccount?
 }
 

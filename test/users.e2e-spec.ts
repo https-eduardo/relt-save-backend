@@ -1,7 +1,5 @@
 import * as request from 'supertest';
-import { Test } from '@nestjs/testing';
-import { INestApplication, ValidationPipe } from '@nestjs/common';
-import { AppModule } from 'src/app.module';
+import { app } from './setup.e2e';
 
 interface UserMock {
   name: string;
@@ -10,44 +8,29 @@ interface UserMock {
   profile_url: string;
 }
 
-describe('Users Tests (E2E)', () => {
-  let app: INestApplication;
-  let fakeUser: UserMock;
+describe('E2E User Tests', () => {
   let accessToken: string;
   let refreshToken: string;
+  let fakeUser: UserMock;
 
-  beforeAll(async () => {
-    const moduleFixture = await Test.createTestingModule({
-      imports: [AppModule],
-    }).compile();
-
-    app = moduleFixture.createNestApplication();
+  beforeAll(() => {
     fakeUser = {
       name: 'Eduardo Wagner',
       password: 'minhasenha',
       email: 'meuemailfake@gmail.com',
       profile_url: 'https://somesite.com/someimg',
     };
-
-    app.useGlobalPipes(
-      new ValidationPipe({
-        whitelist: true,
-        transform: true,
-      }),
-    );
-    await app.init();
   });
 
-  it('Create a new user', async () => {
-    const data = request(app.getHttpServer())
+  it('/POST users', () => {
+    return request(app.getHttpServer())
       .post('/users')
       .send(fakeUser)
       .expect(201)
       .expect((res) => res.body.email === fakeUser.email);
-    console.log((await data).body);
   });
 
-  it('Authenticate using created user credentials', async () => {
+  it('/POST auth', async () => {
     const data = await request(app.getHttpServer())
       .post('/auth')
       .send({ email: fakeUser.email, password: fakeUser.password });
@@ -59,7 +42,7 @@ describe('Users Tests (E2E)', () => {
     expect(data.body.refreshToken).toBeDefined();
   });
 
-  it('Fetch own user data', () => {
+  it('/GET users/me', () => {
     return request(app.getHttpServer())
       .get('/users/me')
       .set({ Authorization: `Bearer ${accessToken}` })
@@ -67,7 +50,7 @@ describe('Users Tests (E2E)', () => {
       .expect((res) => res.body.email === fakeUser.email);
   });
 
-  it('Update access and refresh token', () => {
+  it('/POST auth/refresh', () => {
     return request(app.getHttpServer())
       .post('/auth/refresh')
       .set({ Authorization: `Bearer ${refreshToken}` })
@@ -76,15 +59,11 @@ describe('Users Tests (E2E)', () => {
       .expect((res) => res.body.refreshToken !== refreshToken);
   });
 
-  it('Logout user', () => {
+  it('/POST auth/logout', () => {
     // The old access token will no longer work just after 10 minutes of creation.
     return request(app.getHttpServer())
       .post('/auth/logout')
       .set({ Authorization: `Bearer ${accessToken}` })
       .expect(200);
-  });
-
-  afterAll(async () => {
-    await app.close();
   });
 });
