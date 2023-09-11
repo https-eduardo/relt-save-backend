@@ -5,7 +5,9 @@ import { ConfigModule } from '@nestjs/config';
 import { UsersModule } from './modules/users/users.module';
 import { AuthModule } from './modules/auth/auth.module';
 import { PrismaModule } from './modules/prisma/prisma.module';
-import { BankAccountModule } from './modules/bank-account/bank-account.module';
+import { BankAccountModule } from './modules/bank-accounts/bank-accounts.module';
+import { BudgetsModule } from './modules/budgets/budgets.module';
+import { CardsModule } from './modules/cards/cards.module';
 
 @Module({
   imports: [
@@ -16,6 +18,8 @@ import { BankAccountModule } from './modules/bank-account/bank-account.module';
     AuthModule,
     PrismaModule,
     BankAccountModule,
+    BudgetsModule,
+    CardsModule,
   ],
   controllers: [AppController],
   providers: [AppService],

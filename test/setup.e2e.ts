@@ -9,12 +9,16 @@ interface TestUser {
   accessToken: string;
 }
 
+interface TestBankAccount {
+  id: number;
+}
+
+const prisma = new PrismaClient();
 export let app: INestApplication;
 export let testUser: TestUser;
+export let testBankAccount: TestBankAccount;
 
 async function setupAuth() {
-  const prisma = new PrismaClient();
-
   const userData = {
     email: 'testuser@gmail.com',
     name: 'testuser',
@@ -32,6 +36,21 @@ async function setupAuth() {
   testUser = { id: user.id, accessToken };
 }
 
+async function setupBankAccount() {
+  const bankAccountData = {
+    name: 'Test Bank Account',
+    user_id: testUser.id,
+    bank_id: 1,
+    balance: 1000,
+  };
+
+  const bankAccount = await prisma.bankAccount.create({
+    data: bankAccountData,
+  });
+
+  testBankAccount = { id: bankAccount.id };
+}
+
 global.beforeAll(async () => {
   const moduleFixture = await Test.createTestingModule({
     imports: [AppModule],
@@ -45,6 +64,7 @@ global.beforeAll(async () => {
     }),
   );
   await setupAuth();
+  await setupBankAccount();
   await app.init();
 });
 

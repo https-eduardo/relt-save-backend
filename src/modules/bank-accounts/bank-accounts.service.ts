@@ -8,7 +8,7 @@ import { CreateBankAccountDto } from './dto/create-bank-account.dto';
 import { UpdateBankAccountDto } from './dto/update-bank-account.dto';
 
 @Injectable()
-export class BankAccountService {
+export class BankAccountsService {
   constructor(private readonly prisma: PrismaService) {}
 
   async create(userId: number, createBankAccountDto: CreateBankAccountDto) {
@@ -72,7 +72,7 @@ export class BankAccountService {
   async delete(bankAccountId: number) {
     try {
       return await this.prisma.bankAccount.delete({
-        where: { user_id: bankAccountId },
+        where: { id: bankAccountId },
       });
     } catch {
       throw new NotFoundException();

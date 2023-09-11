@@ -7,7 +7,7 @@ interface BankAccountMock {
   bankId: number;
 }
 
-describe('Bank tests', () => {
+describe('E2E Bank Tests', () => {
   let fakeBankAccount: BankAccountMock;
   let bankAccountId: number;
 
@@ -19,9 +19,9 @@ describe('Bank tests', () => {
     };
   });
 
-  it('/POST /bank-account', async () => {
+  it('/POST /bank-accounts', async () => {
     const data = await request(app.getHttpServer())
-      .post('/bank-account')
+      .post('/bank-accounts')
       .set({ Authorization: `Bearer ${testUser.accessToken}` })
       .send(fakeBankAccount);
     expect(data.status).toBe(201);
@@ -29,35 +29,35 @@ describe('Bank tests', () => {
     bankAccountId = data.body.id;
   });
 
-  it('/GET /bank-account/:id', () => {
+  it('/GET /bank-accounts/:id', () => {
     return request(app.getHttpServer())
-      .get(`/bank-account/${bankAccountId}`)
+      .get(`/bank-accounts/${bankAccountId}`)
       .set({ Authorization: `Bearer ${testUser.accessToken}` })
       .expect(200)
       .expect((res) => res.body.name === fakeBankAccount.name);
   });
 
-  it('/PATCH /bank-account/:id', () => {
+  it('/PATCH /bank-accounts/:id', () => {
     fakeBankAccount.name = 'Conta Corrente Nubank';
     return request(app.getHttpServer())
-      .patch(`/bank-account/${bankAccountId}`)
+      .patch(`/bank-accounts/${bankAccountId}`)
       .set({ Authorization: `Bearer ${testUser.accessToken}` })
       .send(fakeBankAccount)
       .expect(200)
       .expect((res) => res.body.name === fakeBankAccount.name);
   });
 
-  it('/GET /bank-account/:userId', () => {
+  it('/GET /bank-accounts/:userId', () => {
     return request(app.getHttpServer())
-      .get(`/bank-account/${testUser.id}`)
+      .get(`/bank-accounts/${testUser.id}`)
       .set({ Authorization: `Bearer ${testUser.accessToken}` })
       .expect(200)
       .expect((res) => res.body.name === fakeBankAccount.name);
   });
 
-  it('/DELETE /bank-account/:id', () => {
+  it('/DELETE /bank-accounts/:id', () => {
     return request(app.getHttpServer())
-      .delete(`/bank-account/${bankAccountId}`)
+      .delete(`/bank-accounts/${bankAccountId}`)
       .set({ Authorization: `Bearer ${testUser.accessToken}` })
       .expect(200)
       .expect((res) => res.body.name === fakeBankAccount.name);

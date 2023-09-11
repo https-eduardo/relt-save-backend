@@ -23,21 +23,21 @@ model User {
 
 model BankAccount {
   id         Int      @id @default(autoincrement())
-  user_id    Int      @unique
+  user_id    Int
   user       User     @relation(fields: [user_id], references: [id], onDelete: Cascade)
   cards      Card[]
   name       String   @db.VarChar(32)
   balance    Float    @default(0)
-  bank_id    Int      @unique
+  bank_id    Int
   bank       Bank     @relation(fields: [bank_id], references: [id])
   created_at DateTime @default(now())
 }
 
 model Bank {
-  id           Int          @id @default(autoincrement())
+  id           Int           @id @default(autoincrement())
   logo_url     String
-  name         String       @unique
-  bank_account BankAccount?
+  name         String        @unique
+  bankAccounts BankAccount[]
 }
 
 model Budget {

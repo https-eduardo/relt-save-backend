@@ -8,7 +8,7 @@ import {
   Post,
   UseGuards,
 } from '@nestjs/common';
-import { BankAccountService } from './bank-account.service';
+import { BankAccountsService } from './bank-accounts.service';
 import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
 import { FindBankAccountByIdDto } from './dto/find-bank-account.dto';
 import { UpdateBankAccountDto } from './dto/update-bank-account.dto';
@@ -16,9 +16,9 @@ import { User } from 'src/common/decorators/user.decorator';
 import { JwtUserPayload } from 'src/common/types/user-payload.type';
 import { CreateBankAccountDto } from './dto/create-bank-account.dto';
 
-@Controller('bank-account')
-export class BankAccountController {
-  constructor(private readonly service: BankAccountService) {}
+@Controller('bank-accounts')
+export class BankAccountsController {
+  constructor(private readonly service: BankAccountsService) {}
 
   @Post()
   @UseGuards(JwtAuthGuard)
