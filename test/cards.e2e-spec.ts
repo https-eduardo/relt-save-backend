@@ -50,9 +50,9 @@ describe('E2E Card Tests', () => {
       .expect((res) => res.body.final_numbers === fakeCard.finalNumbers);
   });
 
-  it('/GET /cards/:userId', () => {
+  it('/GET /cards/:bankAccountId', () => {
     return request(app.getHttpServer())
-      .get(`/cards/${testUser.id}`)
+      .get(`/cards/${testBankAccount.id}`)
       .set({ Authorization: `Bearer ${testUser.accessToken}` })
       .expect(200)
       .expect((res) => res.body.final_numbers === fakeCard.finalNumbers);

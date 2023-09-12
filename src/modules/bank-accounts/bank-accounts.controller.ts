@@ -44,7 +44,7 @@ export class BankAccountsController {
     return await this.service.findOne(bankAccountId);
   }
 
-  @Get(':userId')
+  @Get()
   @UseGuards(JwtAuthGuard)
   async findByUserId(@User() user: JwtUserPayload) {
     return await this.service.findByUserId(user.id);

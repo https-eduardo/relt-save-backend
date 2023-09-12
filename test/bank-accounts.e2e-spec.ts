@@ -47,9 +47,9 @@ describe('E2E Bank Tests', () => {
       .expect((res) => res.body.name === fakeBankAccount.name);
   });
 
-  it('/GET /bank-accounts/:userId', () => {
+  it('/GET /bank-accounts', () => {
     return request(app.getHttpServer())
-      .get(`/bank-accounts/${testUser.id}`)
+      .get(`/bank-accounts`)
       .set({ Authorization: `Bearer ${testUser.accessToken}` })
       .expect(200)
       .expect((res) => res.body.name === fakeBankAccount.name);

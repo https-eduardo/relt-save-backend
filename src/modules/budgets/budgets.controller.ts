@@ -47,10 +47,10 @@ export class BudgetsController {
     return await this.service.findOne(budgetId);
   }
 
-  @Get(':userId')
+  @Get()
   @UseGuards(JwtAuthGuard)
-  async findByUserId(@Param() { userId }: FindBudgetByUserIdDto) {
-    return await this.service.findOne(userId);
+  async findByUserId(@User() user: JwtUserPayload) {
+    return await this.service.findOne(user.id);
   }
 
   @Delete(':budgetId')

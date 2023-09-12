@@ -50,9 +50,9 @@ describe('E2E Budget Tests', () => {
       .expect((res) => res.body.name === fakeBudget.name);
   });
 
-  it('/GET /budgets/:userId', () => {
+  it('/GET /budgets', () => {
     return request(app.getHttpServer())
-      .get(`/budgets/${testUser.id}`)
+      .get(`/budgets`)
       .set({ Authorization: `Bearer ${testUser.accessToken}` })
       .expect(200)
       .expect((res) => res.body.name === fakeBudget.name);
