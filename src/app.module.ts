@@ -8,6 +8,7 @@ import { PrismaModule } from './modules/prisma/prisma.module';
 import { BankAccountModule } from './modules/bank-accounts/bank-accounts.module';
 import { BudgetsModule } from './modules/budgets/budgets.module';
 import { CardsModule } from './modules/cards/cards.module';
+import { CategoriesModule } from './modules/categories/categories.module';
 
 @Module({
   imports: [
@@ -20,6 +21,7 @@ import { CardsModule } from './modules/cards/cards.module';
     BankAccountModule,
     BudgetsModule,
     CardsModule,
+    CategoriesModule,
   ],
   controllers: [AppController],
   providers: [AppService],

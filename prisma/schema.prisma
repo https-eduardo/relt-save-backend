@@ -19,6 +19,7 @@ model User {
   bank_accounts BankAccount[]
   budgets       Budget[]
   created_at    DateTime      @default(now())
+  Category      Category[]
 }
 
 model BankAccount {
@@ -65,6 +66,9 @@ model Card {
 model Category {
   id           Int           @id @default(autoincrement())
   name         String        @unique @db.VarChar(32)
+  color        String        @default("#121212")
+  user_id      Int
+  user         User          @relation(fields: [user_id], references: [id], onDelete: Cascade)
   transactions Transaction[]
 }
 
