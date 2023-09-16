@@ -19,7 +19,7 @@ model User {
   bank_accounts BankAccount[]
   budgets       Budget[]
   created_at    DateTime      @default(now())
-  Category      Category[]
+  categories    Category[]
 }
 
 model BankAccount {
@@ -83,10 +83,10 @@ model Transaction {
   payment_type PaymentType
   card_id      Int?
   card         Card?       @relation(fields: [card_id], references: [id])
-  due_date     DateTime
-  installments Int         @db.SmallInt
+  due_date     DateTime?
+  installments Int         @default(1) @db.SmallInt
   value        Float
-  paid_at      DateTime
+  paid_at      DateTime?
   created_at   DateTime    @default(now())
 }
 

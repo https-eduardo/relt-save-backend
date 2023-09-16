@@ -9,6 +9,7 @@ import { BankAccountModule } from './modules/bank-accounts/bank-accounts.module'
 import { BudgetsModule } from './modules/budgets/budgets.module';
 import { CardsModule } from './modules/cards/cards.module';
 import { CategoriesModule } from './modules/categories/categories.module';
+import { TransactionsModule } from './modules/transactions/transactions.module';
 
 @Module({
   imports: [
@@ -22,6 +23,7 @@ import { CategoriesModule } from './modules/categories/categories.module';
     BudgetsModule,
     CardsModule,
     CategoriesModule,
+    TransactionsModule,
   ],
   controllers: [AppController],
   providers: [AppService],
