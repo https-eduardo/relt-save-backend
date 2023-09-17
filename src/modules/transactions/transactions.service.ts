@@ -58,7 +58,6 @@ export class TransactionsService {
     findTransactionFilter: FindTransactionFilterDto,
   ) {
     const { orderBy, fields } = this.organizeFilters(findTransactionFilter);
-    console.log(userId, fields);
     try {
       return await this.prisma.transaction.findMany({
         include: { card: { select: { bank_account_id: true } } },

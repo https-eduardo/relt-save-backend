@@ -23,46 +23,51 @@ describe('E2E Card Tests', () => {
   });
 
   it('/POST /cards', async () => {
-    const data = await request(app.getHttpServer())
+    const response = await request(app.getHttpServer())
       .post('/cards')
       .set({ Authorization: `Bearer ${testUser.accessToken}` })
       .send(fakeCard);
-    expect(data.status).toBe(201);
-    expect(data.body.final_numbers).toBe(fakeCard.finalNumbers);
-    cardId = data.body.id;
+
+    expect(response.status).toBe(201);
+    expect(response.body.final_numbers).toBe(fakeCard.finalNumbers);
+    cardId = response.body.id;
   });
 
-  it('/GET /cards/:id', () => {
-    return request(app.getHttpServer())
+  it('/GET /cards/:id', async () => {
+    const response = await request(app.getHttpServer())
       .get(`/cards/${cardId}`)
-      .set({ Authorization: `Bearer ${testUser.accessToken}` })
-      .expect(200)
-      .expect((res) => res.body.final_numbers === fakeCard.finalNumbers);
+      .set({ Authorization: `Bearer ${testUser.accessToken}` });
+
+    expect(response.status).toBe(200);
+    expect(response.body.final_numbers === fakeCard.finalNumbers);
   });
 
-  it('/PATCH /cards/:id', () => {
+  it('/PATCH /cards/:id', async () => {
     fakeCard.name = 'Conta Corrente Nubank';
-    return request(app.getHttpServer())
+    const response = await request(app.getHttpServer())
       .patch(`/cards/${cardId}`)
       .set({ Authorization: `Bearer ${testUser.accessToken}` })
-      .send(fakeCard)
-      .expect(200)
-      .expect((res) => res.body.final_numbers === fakeCard.finalNumbers);
+      .send(fakeCard);
+
+    expect(response.status).toBe(200);
+    expect(response.body.name === fakeCard.name);
   });
 
-  it('/GET /cards/:bankAccountId', () => {
-    return request(app.getHttpServer())
+  it('/GET /cards/:bankAccountId', async () => {
+    const response = await request(app.getHttpServer())
       .get(`/cards/${testBankAccount.id}`)
-      .set({ Authorization: `Bearer ${testUser.accessToken}` })
-      .expect(200)
-      .expect((res) => res.body.final_numbers === fakeCard.finalNumbers);
+      .set({ Authorization: `Bearer ${testUser.accessToken}` });
+
+    expect(response.status).toBe(200);
+    expect(response.body.final_numbers === fakeCard.finalNumbers);
   });
 
-  it('/DELETE /cards/:id', () => {
-    return request(app.getHttpServer())
+  it('/DELETE /cards/:id', async () => {
+    const response = await request(app.getHttpServer())
       .delete(`/cards/${cardId}`)
-      .set({ Authorization: `Bearer ${testUser.accessToken}` })
-      .expect(200)
-      .expect((res) => res.body.final_numbers === fakeCard.finalNumbers);
+      .set({ Authorization: `Bearer ${testUser.accessToken}` });
+
+    expect(response.status).toBe(200);
+    expect(response.body.final_numbers === fakeCard.finalNumbers);
   });
 });

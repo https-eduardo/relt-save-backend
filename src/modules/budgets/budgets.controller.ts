@@ -50,7 +50,7 @@ export class BudgetsController {
   @Get()
   @UseGuards(JwtAuthGuard)
   async findByUserId(@User() user: JwtUserPayload) {
-    return await this.service.findOne(user.id);
+    return await this.service.findByUserId(user.id);
   }
 
   @Delete(':budgetId')

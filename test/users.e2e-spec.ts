@@ -11,10 +11,10 @@ interface UserMock {
 describe('E2E User Tests', () => {
   let accessToken: string;
   let refreshToken: string;
-  let fakeUser: UserMock;
+  let userMock: UserMock;
 
   beforeAll(() => {
-    fakeUser = {
+    userMock = {
       name: 'Eduardo Wagner',
       password: 'minhasenha',
       email: 'meuemailfake@gmail.com',
@@ -22,48 +22,52 @@ describe('E2E User Tests', () => {
     };
   });
 
-  it('/POST users', () => {
-    return request(app.getHttpServer())
+  it('/POST users', async () => {
+    const response = await request(app.getHttpServer())
       .post('/users')
-      .send(fakeUser)
-      .expect(201)
-      .expect((res) => res.body.email === fakeUser.email);
+      .send(userMock);
+
+    expect(response.status).toBe(201);
+    expect(response.body.name).toBe(userMock.name);
   });
 
   it('/POST auth', async () => {
-    const data = await request(app.getHttpServer())
+    const response = await request(app.getHttpServer())
       .post('/auth')
-      .send({ email: fakeUser.email, password: fakeUser.password });
+      .send({ email: userMock.email, password: userMock.password });
 
-    expect(data.statusCode).toBe(200);
-    accessToken = data.body.accessToken;
-    refreshToken = data.body.refreshToken;
-    expect(data.body.accessToken).toBeDefined();
-    expect(data.body.refreshToken).toBeDefined();
+    expect(response.statusCode).toBe(200);
+    accessToken = response.body.accessToken;
+    refreshToken = response.body.refreshToken;
+    expect(response.body.accessToken).toBeDefined();
+    expect(response.body.refreshToken).toBeDefined();
   });
 
-  it('/GET users/me', () => {
-    return request(app.getHttpServer())
+  it('/GET users/me', async () => {
+    const response = await request(app.getHttpServer())
       .get('/users/me')
-      .set({ Authorization: `Bearer ${accessToken}` })
-      .expect(200)
-      .expect((res) => res.body.email === fakeUser.email);
+      .set({ Authorization: `Bearer ${accessToken}` });
+
+    expect(response.status).toBe(200);
+    expect(response.body.name).toBe(userMock.name);
   });
 
-  it('/POST auth/refresh', () => {
-    return request(app.getHttpServer())
+  it('/POST auth/refresh', async () => {
+    const response = await request(app.getHttpServer())
       .post('/auth/refresh')
-      .set({ Authorization: `Bearer ${refreshToken}` })
-      .expect(200)
-      .expect((res) => res.body.accessToken !== accessToken)
-      .expect((res) => res.body.refreshToken !== refreshToken);
+      .set({ Authorization: `Bearer ${refreshToken}` });
+
+    expect(response.status).toBe(200);
+    expect(response.body.accessToken).not.toBe(accessToken);
+    expect(response.body.refreshToken).not.toBe(refreshToken);
   });
 
-  it('/POST auth/logout', () => {
+  it('/POST auth/logout', async () => {
     // The old access token will no longer work just after 10 minutes of creation.
-    return request(app.getHttpServer())
+    const response = await request(app.getHttpServer())
       .post('/auth/logout')
-      .set({ Authorization: `Bearer ${accessToken}` })
-      .expect(200);
+      .set({ Authorization: `Bearer ${accessToken}` });
+
+    expect(response.status).toBe(200);
   });
 });

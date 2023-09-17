@@ -18,46 +18,51 @@ describe('E2E Categories Tests', () => {
   });
 
   it('/POST /categories', async () => {
-    const data = await request(app.getHttpServer())
+    const response = await request(app.getHttpServer())
       .post('/categories')
       .set({ Authorization: `Bearer ${testUser.accessToken}` })
       .send(fakeCategory);
-    expect(data.status).toBe(201);
-    expect(data.body.name).toBe(fakeCategory.name);
-    categoryId = data.body.id;
+
+    expect(response.status).toBe(201);
+    expect(response.body.name).toBe(fakeCategory.name);
+    categoryId = response.body.id;
   });
 
-  it('/GET /categories/:id', () => {
-    return request(app.getHttpServer())
+  it('/GET /categories/:id', async () => {
+    const response = await request(app.getHttpServer())
       .get(`/categories/${categoryId}`)
-      .set({ Authorization: `Bearer ${testUser.accessToken}` })
-      .expect(200)
-      .expect((res) => res.body.name === fakeCategory.name);
+      .set({ Authorization: `Bearer ${testUser.accessToken}` });
+
+    expect(response.status).toBe(200);
+    expect(response.body.name).toBe(fakeCategory.name);
   });
 
-  it('/PATCH /categories/:id', () => {
+  it('/PATCH /categories/:id', async () => {
     fakeCategory.name = 'Conta Corrente Nubank';
-    return request(app.getHttpServer())
+    const response = await request(app.getHttpServer())
       .patch(`/categories/${categoryId}`)
       .set({ Authorization: `Bearer ${testUser.accessToken}` })
-      .send(fakeCategory)
-      .expect(200)
-      .expect((res) => res.body.name === fakeCategory.name);
+      .send(fakeCategory);
+
+    expect(response.status).toBe(200);
+    expect(response.body.name).toBe(fakeCategory.name);
   });
 
-  it('/GET /categories', () => {
-    return request(app.getHttpServer())
+  it('/GET /categories', async () => {
+    const response = await request(app.getHttpServer())
       .get(`/categories`)
-      .set({ Authorization: `Bearer ${testUser.accessToken}` })
-      .expect(200)
-      .expect((res) => res.body.name === fakeCategory.name);
+      .set({ Authorization: `Bearer ${testUser.accessToken}` });
+
+    expect(response.status).toBe(200);
+    expect(response.body[0].name).toBe(fakeCategory.name);
   });
 
-  it('/DELETE /categories/:id', () => {
-    return request(app.getHttpServer())
+  it('/DELETE /categories/:id', async () => {
+    const response = await request(app.getHttpServer())
       .delete(`/categories/${categoryId}`)
-      .set({ Authorization: `Bearer ${testUser.accessToken}` })
-      .expect(200)
-      .expect((res) => res.body.name === fakeCategory.name);
+      .set({ Authorization: `Bearer ${testUser.accessToken}` });
+
+    expect(response.status).toBe(200);
+    expect(response.body.name).toBe(fakeCategory.name);
   });
 });

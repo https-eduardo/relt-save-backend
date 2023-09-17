@@ -53,6 +53,6 @@ export class CategoriesController {
   @Delete(':categoryId')
   @UseGuards(JwtAuthGuard)
   async deleteOne(@Param() { categoryId }: FindCategoryByIdDto) {
-    return await this.service.findByUserId(categoryId);
+    return await this.service.delete(categoryId);
   }
 }

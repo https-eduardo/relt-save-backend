@@ -8,11 +8,11 @@ interface BankAccountMock {
 }
 
 describe('E2E Bank Tests', () => {
-  let fakeBankAccount: BankAccountMock;
+  let bankAccountMock: BankAccountMock;
   let bankAccountId: number;
 
   beforeAll(() => {
-    fakeBankAccount = {
+    bankAccountMock = {
       name: 'Poupança Nubank',
       bankId: 6,
       balance: 25000,
@@ -20,46 +20,51 @@ describe('E2E Bank Tests', () => {
   });
 
   it('/POST /bank-accounts', async () => {
-    const data = await request(app.getHttpServer())
+    const response = await request(app.getHttpServer())
       .post('/bank-accounts')
       .set({ Authorization: `Bearer ${testUser.accessToken}` })
-      .send(fakeBankAccount);
-    expect(data.status).toBe(201);
-    expect(data.body.name).toBe(fakeBankAccount.name);
-    bankAccountId = data.body.id;
+      .send(bankAccountMock);
+
+    expect(response.status).toBe(201);
+    expect(response.body.name).toBe(bankAccountMock.name);
+    bankAccountId = response.body.id;
   });
 
-  it('/GET /bank-accounts/:id', () => {
-    return request(app.getHttpServer())
+  it('/GET /bank-accounts/:id', async () => {
+    const response = await request(app.getHttpServer())
       .get(`/bank-accounts/${bankAccountId}`)
-      .set({ Authorization: `Bearer ${testUser.accessToken}` })
-      .expect(200)
-      .expect((res) => res.body.name === fakeBankAccount.name);
+      .set({ Authorization: `Bearer ${testUser.accessToken}` });
+
+    expect(response.status).toBe(200);
+    expect(response.body.name).toBe(bankAccountMock.name);
   });
 
-  it('/PATCH /bank-accounts/:id', () => {
-    fakeBankAccount.name = 'Conta Corrente Nubank';
-    return request(app.getHttpServer())
+  it('/PATCH /bank-accounts/:id', async () => {
+    bankAccountMock.name = 'Conta Corrente Nubank';
+    const response = await request(app.getHttpServer())
       .patch(`/bank-accounts/${bankAccountId}`)
       .set({ Authorization: `Bearer ${testUser.accessToken}` })
-      .send(fakeBankAccount)
-      .expect(200)
-      .expect((res) => res.body.name === fakeBankAccount.name);
+      .send(bankAccountMock);
+
+    expect(response.status).toBe(200);
+    expect(response.body.name).toBe(bankAccountMock.name);
   });
 
-  it('/GET /bank-accounts', () => {
-    return request(app.getHttpServer())
+  it('/GET /bank-accounts', async () => {
+    const response = await request(app.getHttpServer())
       .get(`/bank-accounts`)
-      .set({ Authorization: `Bearer ${testUser.accessToken}` })
-      .expect(200)
-      .expect((res) => res.body.name === fakeBankAccount.name);
+      .set({ Authorization: `Bearer ${testUser.accessToken}` });
+
+    expect(response.status).toBe(200);
+    expect(response.body[0].user_id).toBe(testUser.id);
   });
 
-  it('/DELETE /bank-accounts/:id', () => {
-    return request(app.getHttpServer())
+  it('/DELETE /bank-accounts/:id', async () => {
+    const response = await request(app.getHttpServer())
       .delete(`/bank-accounts/${bankAccountId}`)
-      .set({ Authorization: `Bearer ${testUser.accessToken}` })
-      .expect(200)
-      .expect((res) => res.body.name === fakeBankAccount.name);
+      .set({ Authorization: `Bearer ${testUser.accessToken}` });
+
+    expect(response.status).toBe(200);
+    expect(response.body.name).toBe(bankAccountMock.name);
   });
 });

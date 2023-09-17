@@ -23,46 +23,50 @@ describe('E2E Budget Tests', () => {
   });
 
   it('/POST /budgets', async () => {
-    const data = await request(app.getHttpServer())
+    const response = await request(app.getHttpServer())
       .post('/budgets')
       .set({ Authorization: `Bearer ${testUser.accessToken}` })
       .send(fakeBudget);
-    expect(data.status).toBe(201);
-    expect(data.body.name).toBe(fakeBudget.name);
-    budgetId = data.body.id;
+
+    expect(response.status).toBe(201);
+    expect(response.body.name).toBe(fakeBudget.name);
+    budgetId = response.body.id;
   });
 
-  it('/GET /budgets/:id', () => {
-    return request(app.getHttpServer())
+  it('/GET /budgets/:id', async () => {
+    const response = await request(app.getHttpServer())
       .get(`/budgets/${budgetId}`)
-      .set({ Authorization: `Bearer ${testUser.accessToken}` })
-      .expect(200)
-      .expect((res) => res.body.name === fakeBudget.name);
+      .set({ Authorization: `Bearer ${testUser.accessToken}` });
+
+    expect(response.status).toBe(200);
+    expect(response.body.name).toBe(fakeBudget.name);
   });
 
-  it('/PATCH /budgets/:id', () => {
+  it('/PATCH /budgets/:id', async () => {
     fakeBudget.name = 'Conta Corrente Nubank';
-    return request(app.getHttpServer())
+    const response = await request(app.getHttpServer())
       .patch(`/budgets/${budgetId}`)
       .set({ Authorization: `Bearer ${testUser.accessToken}` })
-      .send(fakeBudget)
-      .expect(200)
-      .expect((res) => res.body.name === fakeBudget.name);
+      .send(fakeBudget);
+
+    expect(response.status).toBe(200);
+    expect(response.body.name).toBe(fakeBudget.name);
   });
 
-  it('/GET /budgets', () => {
-    return request(app.getHttpServer())
+  it('/GET /budgets', async () => {
+    const response = await request(app.getHttpServer())
       .get(`/budgets`)
-      .set({ Authorization: `Bearer ${testUser.accessToken}` })
-      .expect(200)
-      .expect((res) => res.body.name === fakeBudget.name);
+      .set({ Authorization: `Bearer ${testUser.accessToken}` });
+
+    expect(response.status).toBe(200);
+    expect(response.body[0].name).toBe(fakeBudget.name);
   });
 
-  it('/DELETE /budgets/:id', () => {
-    return request(app.getHttpServer())
+  it('/DELETE /budgets/:id', async () => {
+    const response = await request(app.getHttpServer())
       .delete(`/budgets/${budgetId}`)
-      .set({ Authorization: `Bearer ${testUser.accessToken}` })
-      .expect(200)
-      .expect((res) => res.body.name === fakeBudget.name);
+      .set({ Authorization: `Bearer ${testUser.accessToken}` });
+    expect(response.status).toBe(200);
+    expect(response.body.name).toBe(fakeBudget.name);
   });
 });
