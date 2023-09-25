@@ -59,7 +59,7 @@ model Card {
   type            CardType
   bank_account    BankAccount?  @relation(fields: [bank_account_id], references: [id], onDelete: Cascade)
   name            String        @db.VarChar(24)
-  final_numbers   Int           @db.SmallInt
+  final_numbers   String        @db.VarChar(4)
   created_at      DateTime      @default(now())
 }
 

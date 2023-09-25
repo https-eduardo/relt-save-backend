@@ -3,9 +3,10 @@ import {
   IsEnum,
   IsNotEmpty,
   IsNumber,
+  IsNumberString,
   IsString,
-  Max,
-  Min,
+  MaxLength,
+  MinLength,
 } from 'class-validator';
 
 export class CreateCardDto {
@@ -13,10 +14,10 @@ export class CreateCardDto {
   @IsNotEmpty()
   name: string;
 
-  @IsNumber()
-  @Max(9999)
-  @Min(0)
-  finalNumbers: number;
+  @IsNumberString()
+  @MaxLength(4)
+  @MinLength(4)
+  finalNumbers: string;
 
   @IsEnum(CardType)
   type: CardType;

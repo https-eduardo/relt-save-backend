@@ -60,7 +60,10 @@ export class TransactionsService {
     const { orderBy, fields } = this.organizeFilters(findTransactionFilter);
     try {
       return await this.prisma.transaction.findMany({
-        include: { card: { select: { bank_account_id: true } } },
+        include: {
+          card: true,
+          categories: true,
+        },
         orderBy,
         where: { user_id: userId, ...fields },
       });
@@ -123,7 +126,7 @@ export class TransactionsService {
         },
         where: { id: transactionId },
       });
-    } catch (ex) {
+    } catch {
       throw new BadRequestException();
     }
   }
