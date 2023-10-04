@@ -23,15 +23,16 @@ model User {
 }
 
 model BankAccount {
-  id         Int      @id @default(autoincrement())
-  user_id    Int
-  user       User     @relation(fields: [user_id], references: [id], onDelete: Cascade)
-  cards      Card[]
-  name       String   @db.VarChar(32)
-  balance    Float    @default(0)
-  bank_id    Int
-  bank       Bank     @relation(fields: [bank_id], references: [id])
-  created_at DateTime @default(now())
+  id           Int           @id @default(autoincrement())
+  user_id      Int
+  user         User          @relation(fields: [user_id], references: [id], onDelete: Cascade)
+  cards        Card[]
+  name         String        @db.VarChar(32)
+  balance      Float         @default(0)
+  bank_id      Int
+  bank         Bank          @relation(fields: [bank_id], references: [id])
+  transactions Transaction[]
+  created_at   DateTime      @default(now())
 }
 
 model Bank {
@@ -73,21 +74,23 @@ model Category {
 }
 
 model Transaction {
-  id           Int         @id @default(autoincrement())
-  user_id      Int?
-  user         User?       @relation(fields: [user_id], references: [id], onDelete: Cascade)
-  name         String      @db.VarChar(32)
-  description  String
-  categories   Category[]
-  charges      Charge[]
-  payment_type PaymentType
-  card_id      Int?
-  card         Card?       @relation(fields: [card_id], references: [id])
-  due_date     DateTime?
-  installments Int         @default(1) @db.SmallInt
-  value        Float
-  paid_at      DateTime?
-  created_at   DateTime    @default(now())
+  id              Int          @id @default(autoincrement())
+  user_id         Int?
+  user            User?        @relation(fields: [user_id], references: [id], onDelete: Cascade)
+  name            String       @db.VarChar(32)
+  description     String
+  categories      Category[]
+  charges         Charge[]
+  payment_type    PaymentType
+  card_id         Int?
+  card            Card?        @relation(fields: [card_id], references: [id])
+  bank_account_id BankAccount? @relation(fields: [bank_account], references: [id])
+  bank_account    Int?
+  due_date        DateTime?
+  installments    Int          @default(1) @db.SmallInt
+  value           Float
+  paid_at         DateTime?
+  created_at      DateTime     @default(now())
 }
 
 model Charge {

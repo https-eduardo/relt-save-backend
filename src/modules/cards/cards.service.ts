@@ -63,6 +63,17 @@ export class CardsService {
     }
   }
 
+  async findByUserId(userId: number) {
+    try {
+      return await this.prisma.card.findMany({
+        include: { bank_account: true },
+        where: { bank_account: { user_id: userId } },
+      });
+    } catch {
+      throw new BadRequestException();
+    }
+  }
+
   async delete(cardId: number) {
     try {
       return await this.prisma.card.delete({

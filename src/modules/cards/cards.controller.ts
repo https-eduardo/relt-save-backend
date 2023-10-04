@@ -16,6 +16,8 @@ import {
   FindCardByIdDto,
   FindCardsByBankAccountIdDto,
 } from './dto/find-card.dto';
+import { User } from 'src/common/decorators/user.decorator';
+import { JwtUserPayload } from 'src/common/types/user-payload.type';
 
 @Controller('cards')
 export class CardsController {
@@ -35,18 +37,25 @@ export class CardsController {
   ) {
     return await this.service.update(cardId, updateCardDto);
   }
-  @Get(':cardId')
-  @UseGuards(JwtAuthGuard)
-  async findOne(@Param() { cardId }: FindCardByIdDto) {
-    return await this.service.findOne(cardId);
-  }
 
-  @Get(':bankAccountId')
+  @Get('bank-account/:bankAccountId')
   @UseGuards(JwtAuthGuard)
   async findByBankAccountId(
     @Param() { bankAccountId }: FindCardsByBankAccountIdDto,
   ) {
     return await this.service.findByBankAccountId(bankAccountId);
+  }
+
+  @Get()
+  @UseGuards(JwtAuthGuard)
+  async findByUserId(@User() user: JwtUserPayload) {
+    return await this.service.findByUserId(user.id);
+  }
+
+  @Get(':cardId')
+  @UseGuards(JwtAuthGuard)
+  async findOne(@Param() { cardId }: FindCardByIdDto) {
+    return await this.service.findOne(cardId);
   }
 
   @Delete(':cardId')
