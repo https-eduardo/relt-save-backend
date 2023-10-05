@@ -32,6 +32,10 @@ export class CreateTransactionDto {
   @IsOptional()
   cardId?: number;
 
+  @IsPositive()
+  @IsOptional()
+  bankAccountId?: number;
+
   @IsDate()
   @Transform(({ value }) => new Date(value))
   @IsOptional()

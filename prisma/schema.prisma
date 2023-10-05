@@ -84,8 +84,8 @@ model Transaction {
   payment_type    PaymentType
   card_id         Int?
   card            Card?        @relation(fields: [card_id], references: [id])
-  bank_account_id BankAccount? @relation(fields: [bank_account], references: [id])
-  bank_account    Int?
+  bank_account    BankAccount? @relation(fields: [bank_account_id], references: [id])
+  bank_account_id Int?
   due_date        DateTime?
   installments    Int          @default(1) @db.SmallInt
   value           Float

@@ -26,11 +26,18 @@ export class TransactionsService {
       cardId,
       paidAt,
       createdAt,
+      bankAccountId,
     } = createTransactionDto;
+
     const categoriesConnections = categories
       ? categories.map((id) => ({ id }))
       : undefined;
+
     const card = cardId ? { connect: { id: cardId } } : undefined;
+
+    const bankAccount = bankAccountId
+      ? { connect: { id: bankAccountId } }
+      : undefined;
 
     try {
       return await this.prisma.transaction.create({
@@ -39,6 +46,7 @@ export class TransactionsService {
           name,
           description,
           categories: { connect: categoriesConnections },
+          bank_account: bankAccount,
           payment_type: paymentType,
           value,
           due_date: dueDate,
@@ -99,6 +107,7 @@ export class TransactionsService {
       dueDate,
       installments,
       cardId,
+      bankAccountId,
       paidAt,
       createdAt,
     } = updateTransactionDto;
@@ -109,7 +118,11 @@ export class TransactionsService {
     let card: Prisma.CardUpdateOneWithoutTransactionsNestedInput = cardId
       ? { connect: { id: cardId } }
       : undefined;
+    let bankAccount: Prisma.BankAccountUpdateOneWithoutTransactionsNestedInput =
+      bankAccountId ? { connect: { id: bankAccountId } } : undefined;
     if (paymentType !== PaymentType.CARD) card = { disconnect: true };
+    if (paymentType !== PaymentType.BALANCE) bankAccount = { disconnect: true };
+
     try {
       return await this.prisma.transaction.update({
         data: {
@@ -119,6 +132,7 @@ export class TransactionsService {
           payment_type: paymentType,
           value,
           due_date: dueDate,
+          bank_account: bankAccount,
           installments,
           card,
           paid_at: paidAt,
@@ -154,7 +168,7 @@ export class TransactionsService {
 
     const orderBy: Prisma.TransactionOrderByWithRelationInput = {
       value: valueOrder,
-      created_at: createdDateOrder,
+      created_at: createdDateOrder ?? 'desc',
     };
 
     const valueFilter: Prisma.FloatFilter<'Transaction'> =
