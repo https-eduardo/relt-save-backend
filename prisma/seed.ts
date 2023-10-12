@@ -5,47 +5,47 @@ dotenv.config();
 const banks = [
   {
     name: 'Itau',
-    logo_url: 'https://imgur.com/QZEaq6J',
+    logo_url: 'https://i.imgur.com/QZEaq6J.png',
   },
   {
     name: 'Bradesco',
-    logo_url: 'https://imgur.com/ZRLie2t',
+    logo_url: 'https://i.imgur.com/ZRLie2t.png',
   },
   {
     name: 'Santander',
-    logo_url: 'https://imgur.com/cmOUXzh',
+    logo_url: 'https://i.imgur.com/cmOUXzh.png',
   },
   {
     name: 'Banco do Brasil',
-    logo_url: 'https://imgur.com/WQHYWSI',
+    logo_url: 'https://i.imgur.com/WQHYWSI.png',
   },
   {
     name: 'BTG Pactual',
-    logo_url: 'https://imgur.com/6LG2fjA',
+    logo_url: 'https://i.imgur.com/6LG2fjA.png',
   },
   {
     name: 'Nubank',
-    logo_url: 'https://imgur.com/0uNECaK',
+    logo_url: 'https://i.imgur.com/0uNECaK.png',
   },
   {
     name: 'Inter',
-    logo_url: 'https://imgur.com/z50fcZn',
+    logo_url: 'https://i.imgur.com/z50fcZn.png',
   },
   {
     name: 'Banco Pan',
-    logo_url: 'https://imgur.com/EZ2kjBT',
+    logo_url: 'https://i.imgur.com/EZ2kjBT.png',
   },
   {
     name: 'Banco Sofisa',
-    logo_url: 'https://imgur.com/b9MRxy6',
+    logo_url: 'https://i.imgur.com/b9MRxy6.png',
   },
   {
     name: 'BRB Banco de Brasília',
-    logo_url: 'https://imgur.com/8BqWnfU',
+    logo_url: 'https://i.imgur.com/8BqWnfU.png',
   },
   {
     name: 'Outro',
-    logo_url: 'https://imgur.com/hZaMkJs',
+    logo_url: 'https://i.imgur.com/hZaMkJs.png',
   },
 ];
 

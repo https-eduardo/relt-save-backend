@@ -62,6 +62,7 @@ export class BankAccountsService {
   async findByUserId(userId: number) {
     try {
       return await this.prisma.bankAccount.findMany({
+        include: { bank: true },
         where: { user_id: userId },
       });
     } catch {
