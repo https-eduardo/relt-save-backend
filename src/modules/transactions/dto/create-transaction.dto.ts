@@ -51,10 +51,5 @@ export class CreateTransactionDto {
   @IsDate()
   @Transform(({ value }) => new Date(value))
   @IsOptional()
-  paidAt?: Date;
-
-  @IsDate()
-  @Transform(({ value }) => new Date(value))
-  @IsOptional()
   createdAt?: Date;
 }

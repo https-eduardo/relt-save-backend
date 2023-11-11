@@ -24,7 +24,6 @@ export class TransactionsService {
       dueDate,
       installments,
       cardId,
-      paidAt,
       createdAt,
       bankAccountId,
     } = createTransactionDto;
@@ -39,6 +38,18 @@ export class TransactionsService {
       ? { connect: { id: bankAccountId } }
       : undefined;
 
+    const charges = [];
+
+    for (let installment = 0; installment < installments; installment++) {
+      const dueDate = createdAt ?? new Date();
+      dueDate.setMonth(dueDate.getMonth() + installment);
+      const charge: Prisma.ChargeCreateManyInput = {
+        due_date: dueDate,
+        value: value / installments,
+      };
+      charges.push(charge);
+    }
+
     try {
       return await this.prisma.transaction.create({
         data: {
@@ -46,13 +57,13 @@ export class TransactionsService {
           name,
           description,
           categories: { connect: categoriesConnections },
+          charges: { createMany: { data: charges } },
           bank_account: bankAccount,
           payment_type: paymentType,
           value,
           due_date: dueDate,
           installments,
           card,
-          paid_at: paidAt,
           created_at: createdAt,
         },
       });
@@ -71,6 +82,7 @@ export class TransactionsService {
         include: {
           card: true,
           categories: true,
+          charges: true,
         },
         orderBy,
         where: { user_id: userId, ...fields },
@@ -110,7 +122,6 @@ export class TransactionsService {
       installments,
       cardId,
       bankAccountId,
-      paidAt,
       createdAt,
     } = updateTransactionDto;
     const categoriesConnections = categories
@@ -137,7 +148,6 @@ export class TransactionsService {
           bank_account: bankAccount,
           installments,
           card,
-          paid_at: paidAt,
           created_at: createdAt,
         },
         where: { id: transactionId },
@@ -176,17 +186,19 @@ export class TransactionsService {
     const valueFilter: Prisma.FloatFilter<'Transaction'> =
       type === TransactionType.EXPENSES ? { lt: 0 } : { gte: 0 };
 
-    let paidAtFilter: Prisma.DateTimeFilter<'Transaction'> = paid
-      ? { not: null }
-      : null;
+    let paidAtFilter: Prisma.ChargeListRelationFilter = paid
+      ? { every: { paid_at: { not: null } } }
+      : { every: { paid_at: null } };
 
     if (typeof paid === 'undefined') paidAtFilter = undefined;
 
     const fields: Prisma.TransactionWhereInput = {
       value: type !== undefined ? valueFilter : undefined,
-      created_at: { gte: minDate, lte: maxDate },
       categories: categoryId ? { some: { id: categoryId } } : undefined,
-      paid_at: paidAtFilter,
+      charges: {
+        ...paidAtFilter,
+        some: { due_date: { gte: minDate, lte: maxDate } },
+      },
     };
 
     return { orderBy, fields };

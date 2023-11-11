@@ -89,7 +89,6 @@ model Transaction {
   due_date        DateTime?
   installments    Int          @default(1) @db.SmallInt
   value           Float
-  paid_at         DateTime?
   created_at      DateTime     @default(now())
 }
 
@@ -98,7 +97,8 @@ model Charge {
   transaction_id Int?
   transaction    Transaction? @relation(fields: [transaction_id], references: [id], onDelete: Cascade)
   due_date       DateTime
-  paid_at        DateTime
+  paid_at        DateTime?
+  value          Float
   created_at     DateTime     @default(now())
 }
 

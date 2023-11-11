@@ -30,7 +30,7 @@ export class AuthService {
       iat: new Date().getTime(),
     };
 
-    return this.jwtService.sign(payload, { expiresIn: '10m' });
+    return this.jwtService.sign(payload, { expiresIn: '1m' });
   }
 
   private generateRefreshToken(userId: number) {

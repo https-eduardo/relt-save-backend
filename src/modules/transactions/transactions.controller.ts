@@ -62,4 +62,10 @@ export class TransactionsController {
   async deleteOne(@Param() { transactionId }: FindTransactionByIdDto) {
     return await this.service.deleteOne(transactionId);
   }
+
+  @Get('categories')
+  @UseGuards(JwtAuthGuard)
+  async getBalanceByCategories(@User() user: JwtUserPayload) {
+    // return await this.service.getBalanceByCategories(user.id);
+  }
 }
