@@ -27,15 +27,17 @@ export class AuthService {
       email: user.email,
       profile_url: user.profile_url,
       created_at: user.created_at,
+      iat: new Date().getTime(),
     };
 
-    return this.jwtService.sign(payload, { expiresIn: '10m' });
+    return this.jwtService.sign(payload, { expiresIn: '1m' });
   }
 
   private generateRefreshToken(userId: number) {
-    const payload = { userId };
+    const payload = { userId, iat: new Date().getTime() };
 
-    return this.jwtService.sign(payload);
+    const refresh_token = this.jwtService.sign(payload);
+    return refresh_token;
   }
 
   extractBearerToken(req: Request) {
@@ -125,7 +127,7 @@ export class AuthService {
     if (!isValidRefreshToken) throw new UnauthorizedException();
 
     const newRefreshToken = this.generateRefreshToken(user.id);
-    await this.usersService.updateRefreshToken(user.id, refreshToken);
+    await this.usersService.updateRefreshToken(user.id, newRefreshToken);
 
     const accessToken = this.generateAccessToken(user);
 
