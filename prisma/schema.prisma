@@ -8,34 +8,38 @@ generator client {
 }
 
 model User {
-  id           Int           @id @default(autoincrement())
-  name         String
-  email        String        @unique
-  password     String
-  profile_url  String
-  transactions Transaction[]
-  bank_account BankAccount?
-  budgets      Budget[]
-  created_at   DateTime      @default(now())
+  id            Int           @id @default(autoincrement())
+  name          String
+  email         String        @unique
+  password      String?
+  provider      AuthProvider?
+  profile_url   String?
+  refresh_token String?
+  transactions  Transaction[]
+  bank_accounts BankAccount[]
+  budgets       Budget[]
+  created_at    DateTime      @default(now())
+  categories    Category[]
 }
 
 model BankAccount {
-  id         Int      @id @default(autoincrement())
-  user_id    Int      @unique
-  user       User     @relation(fields: [user_id], references: [id], onDelete: Cascade)
-  cards      Card[]
-  name       String   @db.VarChar(32)
-  balance    Float    @default(0)
-  bank_id    Int      @unique
-  bank       Bank     @relation(fields: [bank_id], references: [id])
-  created_at DateTime @default(now())
+  id           Int           @id @default(autoincrement())
+  user_id      Int
+  user         User          @relation(fields: [user_id], references: [id], onDelete: Cascade)
+  cards        Card[]
+  name         String        @db.VarChar(32)
+  balance      Float         @default(0)
+  bank_id      Int
+  bank         Bank          @relation(fields: [bank_id], references: [id])
+  transactions Transaction[]
+  created_at   DateTime      @default(now())
 }
 
 model Bank {
-  id           Int          @id @default(autoincrement())
-  logoUrl      String
-  name         String
-  bank_account BankAccount?
+  id           Int           @id @default(autoincrement())
+  logo_url     String
+  name         String        @unique
+  bankAccounts BankAccount[]
 }
 
 model Budget {
@@ -56,32 +60,36 @@ model Card {
   type            CardType
   bank_account    BankAccount?  @relation(fields: [bank_account_id], references: [id], onDelete: Cascade)
   name            String        @db.VarChar(24)
-  final_numbers   Int           @db.SmallInt
+  final_numbers   String        @db.VarChar(4)
   created_at      DateTime      @default(now())
 }
 
 model Category {
   id           Int           @id @default(autoincrement())
   name         String        @unique @db.VarChar(32)
+  color        String        @default("#121212")
+  user_id      Int
+  user         User          @relation(fields: [user_id], references: [id], onDelete: Cascade)
   transactions Transaction[]
 }
 
 model Transaction {
-  id           Int         @id @default(autoincrement())
-  user_id      Int?
-  user         User?       @relation(fields: [user_id], references: [id], onDelete: Cascade)
-  name         String      @db.VarChar(32)
-  description  String
-  categories   Category[]
-  charges      Charge[]
-  payment_type PaymentType
-  card_id      Int?
-  card         Card?       @relation(fields: [card_id], references: [id])
-  due_date     DateTime
-  installments Int         @db.SmallInt
-  value        Float
-  paid_at      DateTime
-  created_at   DateTime    @default(now())
+  id              Int          @id @default(autoincrement())
+  user_id         Int?
+  user            User?        @relation(fields: [user_id], references: [id], onDelete: Cascade)
+  name            String       @db.VarChar(32)
+  description     String
+  categories      Category[]
+  charges         Charge[]
+  payment_type    PaymentType
+  card_id         Int?
+  card            Card?        @relation(fields: [card_id], references: [id])
+  bank_account    BankAccount? @relation(fields: [bank_account_id], references: [id])
+  bank_account_id Int?
+  due_date        DateTime?
+  installments    Int          @default(1) @db.SmallInt
+  value           Float
+  created_at      DateTime     @default(now())
 }
 
 model Charge {
@@ -89,7 +97,8 @@ model Charge {
   transaction_id Int?
   transaction    Transaction? @relation(fields: [transaction_id], references: [id], onDelete: Cascade)
   due_date       DateTime
-  paid_at        DateTime
+  paid_at        DateTime?
+  value          Float
   created_at     DateTime     @default(now())
 }
 
@@ -102,4 +111,8 @@ enum PaymentType {
 enum CardType {
   DEBIT
   CREDIT
+}
+
+enum AuthProvider {
+  GOOGLE
 }
